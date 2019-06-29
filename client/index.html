@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Testing Push</title>
+  <script src="push.js"></script>
+</head>
+<body>
+  <script>
+    function reload() {
+      window.push_service.getSubscription().then(function (subscription) {
+        var button = document.getElementById("register_button")
+        if (!!subscription) {
+          console.log('existing subscription', subscription)
+          button.innerText = "Unsubscribe"
+          button.onclick = unsubscribe;
+          toggleExample(subscription.user_id)
+        } else {
+          button.innerText = "Register"
+          button.onclick = subscribe;
+          toggleExample('')
+        }
+      })
+    }
+    function subscribe() {
+      var user_id = prompt("Enter a user Id");
+      window.push_service.register({ user_id, user_traits: {} })
+      .then(function () {
+        reload()        
+      })
+    }
+    function unsubscribe() {
+      window.push_service.unsubscribe()
+      .then(function () {
+        alert("You are now Unsubscribed!");
+        reload()
+      })
+    }
+    function toggleExample(user_id) {
+      document.getElementById("example").innerText = !!user_id ? mkExample(user_id) : ''
+    }
+    function mkExample(user_id) {
+      return `
+curl -X POST \\
+  http://localhost:3050/api/v1/push \\
+  -H 'cache-control: no-cache' \\
+  -H 'content-type: application/json' \\
+  -d '
+  { "to": "${user_id}", 
+    "payload": {
+      "title": "Test Title", 
+      "body": "Test Body", 
+      "icon": "https://cdn1.iconfinder.com/data/icons/european-country-flags/83/hungary-512.png", 
+      "actions": [
+        {"action": {"type": "openWindow", "url": "https://www.google.com/", "id": "Google"}, "title": "💻 Google"},
+        {"action": {"type": "openWindow", "url": "https://www.deezer.com/", "id": "Deezer"}, "title": "🎉 Deezer"}
+      ]
+    }
+  }'
+      `
+    }
+  </script>
+  <script>
+    window.addEventListener('load', reload)
+  </script>
+  <button id="register_button">Register</button>
+  <pre id="example"></pre>
+</body>
+</html>

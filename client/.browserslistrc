@@ -1,0 +1,6 @@
+# Browsers that we support
+
+cover 90% in OM
+not ie 11
+not safari < 11
+not ios_saf < 11

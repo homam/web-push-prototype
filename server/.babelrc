@@ -1,0 +1,21 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage",
+        "debug": true
+      }
+    ],
+    "@babel/preset-typescript",
+  ],
+  "plugins": [],
+  "env": {
+    "development": {
+      "plugins": []
+    },
+    "test": {
+      "plugins": []
+    }
+  }
+}
